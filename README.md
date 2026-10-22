@@ -13,7 +13,7 @@
 前提: macOS/Linux、Python 3.12以上、インターネット接続（Claude API）。
 
 ```bash
-git clone <このリポジトリ> && cd <ディレクトリ>
+git clone https://github.com/shirumono42/SALT2.git && cd SALT2
 ./start.sh          # 初回は .venv 作成・依存導入・.env 雛形コピーまで行い終了します
 # .env を編集（下記）
 ./start.sh          # http://127.0.0.1:8000 で起動
