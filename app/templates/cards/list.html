@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}名刺一覧 - 名刺管理{% endblock %}
+{% block content %}
+<h1>名刺一覧</h1>
+<form class="panel" method="get" action="/cards">
+  <div class="row">
+    <div><label for="q">キーワード（スペース区切りで複数語）</label>
+      <input type="search" id="q" name="q" value="{{ qs.q }}" placeholder="氏名・会社名"></div>
+    <div><label for="target">検索対象</label>
+      <select id="target" name="target">{% for k, v in TARGETS.items() %}<option value="{{ k }}" {{ "selected" if qs.target == k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div><label for="match">一致方式</label>
+      <select id="match" name="match">{% for k, v in MATCHES.items() %}<option value="{{ k }}" {{ "selected" if qs.match == k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div><label for="mode">複数語</label>
+      <select id="mode" name="mode">{% for k, v in MODES.items() %}<option value="{{ k }}" {{ "selected" if qs.mode == k }}>{{ v }}</option>{% endfor %}</select></div>
+  </div>
+  <div class="row">
+    <div><label for="sort">並び替え</label>
+      <select id="sort" name="sort">{% for k, v in SORTS.items() %}<option value="{{ k }}" {{ "selected" if qs.sort == k }}>{{ v }}</option>{% endfor %}</select></div>
+    <div><label for="order">順序</label>
+      <select id="order" name="order"><option value="asc" {{ "selected" if qs.order == "asc" }}>昇順</option><option value="desc" {{ "selected" if qs.order == "desc" }}>降順</option></select></div>
+    <div><label for="per_page">表示件数</label>
+      <select id="per_page" name="per_page">{% for n in PER_PAGE_CHOICES %}<option value="{{ n }}" {{ "selected" if qs.per_page == n }}>{{ n }}件</option>{% endfor %}</select></div>
+    <button type="submit">検索</button>
+    <a class="btn secondary" href="/cards">クリア</a>
+  </div>
+</form>
+
+<p><strong>{{ total }}</strong> 件{% if searched %}（検索結果）{% endif %}　{{ page }} / {{ pages }} ページ</p>
+{% if items %}
+<table>
+  <thead><tr><th>氏名</th><th>会社名</th><th>部署</th><th>役職</th><th>登録日</th></tr></thead>
+  <tbody>
+  {% for c in items %}
+  <tr>
+    <td><a href="/cards/{{ c['id'] }}">{{ c["name"] }}</a></td>
+    <td>{{ c["company"] }}</td><td>{{ c["department"] }}</td><td>{{ c["title"] }}</td>
+    <td>{{ c["created_at"][:10] }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<div class="pager">
+  {% if page > 1 %}<a class="btn secondary" href="{{ pageurl(1) }}">« 最初</a><a class="btn secondary" href="{{ pageurl(page - 1) }}">‹ 前へ</a>{% endif %}
+  <span>{{ page }} / {{ pages }}</span>
+  {% if page < pages %}<a class="btn secondary" href="{{ pageurl(page + 1) }}">次へ ›</a><a class="btn secondary" href="{{ pageurl(pages) }}">最後 »</a>{% endif %}
+</div>
+{% else %}
+<div class="panel">該当する名刺はありません。</div>
+{% endif %}
+{% endblock %}

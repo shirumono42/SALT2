@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}名刺を登録{% endblock %}
+{% block content %}
+<h1>名刺を登録</h1>
+<div class="panel">
+  <form method="post" action="/cards/extract" enctype="multipart/form-data">
+    <label for="file">名刺の画像（1枚ずつ）</label>
+    <input type="file" id="file" name="file" accept=".jpg,.jpeg,.png,.heic,.heif,image/jpeg,image/png,image/heic,image/heif" required>
+    <p class="hint">対応形式: {{ exts }}。1ファイルの上限: {{ max_mb }}MB。</p>
+    <p class="hint">アップロードするとAIが内容を読み取ります。登録前に結果を確認・修正できます。</p>
+    <button type="submit">アップロードして読み取る</button>
+  </form>
+</div>
+{% endblock %}

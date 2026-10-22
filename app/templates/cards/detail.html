@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ card["name"] }} - 名刺管理{% endblock %}
+{% block content %}
+<h1>{{ card["name"] }}</h1>
+<div class="split">
+  <div class="panel">
+    <table>
+      {% for k in fields %}<tr><th style="width:8em">{{ labels[k] }}</th><td>{{ card[k] if card[k] else "（未登録）" }}</td></tr>{% endfor %}
+      <tr><th>登録者</th><td>{{ registrant or "（不明）" }}</td></tr>
+      <tr><th>登録日</th><td>{{ card["created_at"] }}</td></tr>
+      <tr><th>更新日</th><td>{{ card["updated_at"] }}</td></tr>
+    </table>
+    <p>
+      <a class="btn secondary" href="/cards">一覧へ戻る</a>
+      {% if editable %}
+      <a class="btn" href="/cards/{{ card['id'] }}/edit">編集</a>
+      <form method="post" action="/cards/{{ card['id'] }}/delete" style="display:inline"
+            onsubmit="return confirm('この名刺を削除します。よろしいですか？')">
+        <button type="submit" class="danger">削除</button>
+      </form>
+      {% endif %}
+    </p>
+  </div>
+  <div><img class="cardimg" src="/cards/{{ card['id'] }}/image" alt="名刺の元画像"></div>
+</div>
+{% endblock %}

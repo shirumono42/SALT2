@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/
+fixtures_private/
+.DS_Store
+.pytest_cache/
+*.pdf

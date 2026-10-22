@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}名刺管理{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">名刺管理</a>
+  {% if user %}
+  <nav>
+    <a href="/cards">名刺一覧</a>
+    <a href="/cards/new">名刺を登録</a>
+    {% if user["role"] == "admin" %}<a href="/admin/users">利用者・閲覧許可</a>{% endif %}
+  </nav>
+  <form class="logout" method="post" action="/logout">
+    <span class="who">{{ user["email"] }}（{{ "管理者" if user["role"] == "admin" else "一般" }}）</span>
+    <button type="submit">ログアウト</button>
+  </form>
+  {% endif %}
+</header>
+<main>
+  {% if error %}<div class="alert error" role="alert">{{ error }}</div>{% endif %}
+  {% if notice %}<div class="alert notice">{{ notice }}</div>{% endif %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

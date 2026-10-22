@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}利用者管理｜名刺管理{% endblock %}
+{% block content %}
+<h1>利用者管理</h1>
+
+{% if shown_code %}
+<div class="alert warn">
+  <strong>{{ shown_email }}</strong> の認証コード:
+  <span style="font-size:1.6rem;font-weight:700;letter-spacing:.2em;margin-left:8px">{{ shown_code }}</span>
+  <div class="hint">この画面を離れると再表示できません。紛失した場合は「コード再発行」をご利用ください。</div>
+</div>
+{% endif %}
+
+<div class="panel">
+  <form method="post" action="/admin/users" class="row">
+    <div>
+      <label for="email">利用者を追加(メールアドレス)</label>
+      <input id="email" type="email" name="email" placeholder="user@example.com" required>
+    </div>
+    <button type="submit">追加して招待</button>
+  </form>
+  <p class="hint">6桁の認証コードを発行し、メールで案内します(メール未設定時はこの画面に一度だけ表示します)。</p>
+</div>
+
+<table>
+  <thead><tr><th>メールアドレス</th><th>権限</th><th>状態</th><th>操作</th></tr></thead>
+  <tbody>
+  {% for u in users %}
+    <tr>
+      <td>{{ u["email"] }}</td>
+      <td>{{ "管理者" if u["role"] == "admin" else "一般" }}</td>
+      <td>{% if u["activated"] %}有効化済み{% elif u["has_code"] %}未有効化{% else %}未有効化(コード失効){% endif %}</td>
+      <td>
+        <a href="/admin/users/{{ u['id'] }}/grants">閲覧許可</a>
+        {% if not u["activated"] %}
+        <form method="post" action="/admin/users/{{ u['id'] }}/reissue" style="display:inline;margin-left:12px">
+          <button type="submit" class="secondary">コード再発行</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

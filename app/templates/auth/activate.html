@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}アカウント有効化｜名刺管理{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:420px;margin:48px auto">
+  <h1>アカウント有効化</h1>
+  <p class="hint">管理者から届いた6桁のコードと、新しいパスワード(8文字以上)を入力してください。</p>
+  <form method="post" action="/activate">
+    <label for="email">メールアドレス</label>
+    <input id="email" type="email" name="email" value="{{ email or '' }}" autocomplete="username" required>
+    <label for="code">6桁のコード</label>
+    <input id="code" type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required>
+    <label for="password">新しいパスワード</label>
+    <input id="password" type="password" name="password" minlength="8" autocomplete="new-password" required>
+    <label for="password2">新しいパスワード(確認)</label>
+    <input id="password2" type="password" name="password2" minlength="8" autocomplete="new-password" required>
+    <p><button type="submit">有効化する</button></p>
+  </form>
+  <p class="hint"><a href="/login">ログインへ戻る</a></p>
+</div>
+{% endblock %}

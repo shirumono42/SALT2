@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}名刺を編集 - 名刺管理{% endblock %}
+{% block content %}
+<h1>名刺を編集</h1>
+<div class="split">
+  <form class="panel" method="post" action="/cards/{{ card['id'] }}/edit">
+    {% for k in fields %}
+    <label for="f-{{ k }}">{{ labels[k] }}{% if k == "name" %}（必須）{% endif %}</label>
+    <input type="text" id="f-{{ k }}" name="{{ k }}" value="{{ values[k] }}" {{ "required" if k == "name" }}
+           class="{{ 'field-empty' if not values[k] }}">
+    {% if not values[k] and k != "name" %}<div class="warn-text">未入力です</div>{% endif %}
+    {% endfor %}
+    <p>
+      <button type="submit">保存</button>
+      <a class="btn secondary" href="/cards/{{ card['id'] }}">キャンセル</a>
+    </p>
+  </form>
+  <div><img class="cardimg" src="/cards/{{ card['id'] }}/image" alt="名刺の元画像"></div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}閲覧許可 - 名刺管理{% endblock %}
+{% block content %}
+<h1>閲覧許可：{{ target["email"] }}</h1>
+<p><a href="/admin/users">« 利用者一覧へ戻る</a></p>
+{% if target["role"] == "admin" %}
+<div class="panel">この利用者は管理者のため、すべての名刺を閲覧できます。閲覧許可の設定は不要です。</div>
+{% else %}
+<div class="panel">
+  <p class="hint">登録者本人の名刺は常に閲覧できます。以下の許可で、他の人が登録した名刺の閲覧範囲を追加します。</p>
+  <h2>現在の許可</h2>
+  {% if grants %}
+  <table>
+    <thead><tr><th>種類</th><th>対象</th><th></th></tr></thead>
+    <tbody>
+    {% for g in grants %}
+    <tr><td>{{ KINDS[g["kind"]] }}</td><td>{{ g["label"] }}</td>
+      <td><form method="post" action="/admin/users/{{ target['id'] }}/grants/{{ g['id'] }}/delete" style="margin:0">
+        <button type="submit" class="secondary danger">解除</button></form></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p>付与されている許可はありません。</p>{% endif %}
+</div>
+
+<div class="panel">
+  <h2>許可を付与</h2>
+  <nav class="row" style="margin-bottom:8px">
+    {% for k, v in KINDS.items() %}
+    <a class="btn {{ '' if k == kind else 'secondary' }}" style="flex:0 0 auto"
+       href="/admin/users/{{ target['id'] }}/grants?kind={{ k }}">{{ v }}</a>
+    {% endfor %}
+  </nav>
+  <form method="get" action="/admin/users/{{ target['id'] }}/grants" class="row">
+    <input type="hidden" name="kind" value="{{ kind }}">
+    <div><label for="q">候補をキーワードで絞り込み（自由入力検索）</label>
+      <input type="search" id="q" name="q" value="{{ q }}"
+             placeholder="{{ {'company': '会社名', 'department': '会社名・部署名', 'person': '氏名・メール'}[kind] }}"></div>
+    <button type="submit" class="secondary">絞り込み</button>
+  </form>
+  <form method="post" action="/admin/users/{{ target['id'] }}/grants">
+    <input type="hidden" name="kind" value="{{ kind }}">
+    <input type="hidden" name="q" value="{{ q }}">
+    <label for="value">{{ KINDS[kind] }}の候補（{{ cand_total }}件）</label>
+    {% if candidates %}
+    <select id="value" name="value" size="10" required>
+      {% for c in candidates %}<option value="{{ c['value'] }}">{{ c["label"] }}</option>{% endfor %}
+    </select>
+    {% if cand_total > max_cands %}<div class="hint">先頭{{ max_cands }}件のみ表示しています。絞り込んでください。</div>{% endif %}
+    <p><button type="submit">この{{ KINDS[kind] }}の閲覧を許可</button></p>
+    {% else %}
+    <p class="hint">候補がありません（識別できる名刺が無い、または絞り込み結果が0件です）。</p>
+    {% endif %}
+  </form>
+</div>
+{% endif %}
+{% endblock %}

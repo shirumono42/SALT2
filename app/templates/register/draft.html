@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}登録内容の確認{% endblock %}
+{% block content %}
+<h1>登録内容の確認</h1>
+{% for e in errors %}<div class="alert error" role="alert">{{ e }}</div>{% endfor %}
+{% if notice %}<div class="alert notice">{{ notice }}</div>{% endif %}
+{% if empty_labels %}
+<div class="alert warn">次の項目は読み取れず空欄です: {{ empty_labels | join('、') }}</div>
+{% endif %}
+{% if name_empty %}
+<div class="alert warn">氏名が空欄のため、このままでは登録できません。氏名を入力するか、破棄して別の画像で再試行してください。</div>
+{% endif %}
+
+{% if dup_exists and not dup_view %}
+<div class="alert error" role="alert">この名刺は既に登録されています。</div>
+{% elif dup_exists and dup_view %}
+<div class="panel">
+  <h2>既に登録されている名刺があります</h2>
+  {% if diff_keys %}
+  <p class="hint">既存のデータと現在のフォーム値を比較しています（差異のある行を強調）。</p>
+  <table>
+    <thead><tr><th>項目</th><th>既存</th><th>今回（フォームの値）</th></tr></thead>
+    <tbody>
+    {% for k in order %}
+      <tr class="{{ 'diff-diff' if k in diff_keys else '' }}">
+        <th>{{ labels[k] }}</th><td>{{ dup[k] }}</td><td>{{ fields[k] }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if not dup_edit %}
+  <p class="warn-text">この名刺を更新できるのは登録者と管理者のみです。</p>
+  {% endif %}
+  {% else %}
+  <div class="alert notice">同一内容が登録済みです。</div>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="split">
+  <div>
+    <img class="cardimg" src="/cards/draft/{{ draft['id'] }}/image" alt="アップロードした名刺画像">
+  </div>
+  <div>
+    <form method="post" action="/cards/draft/{{ draft['id'] }}/register" class="panel">
+      {% for k in order %}
+      <label for="f_{{ k }}">{{ labels[k] }}{% if k == 'name' %}（必須）{% endif %}</label>
+      <input type="text" id="f_{{ k }}" name="{{ k }}" value="{{ fields[k] }}"
+             class="{{ 'field-empty' if not fields[k] else '' }}">
+      {% endfor %}
+      <div class="row" style="margin-top:16px">
+        {% if not dup_exists %}
+        <button type="submit">登録する</button>
+        {% elif dup_view and dup_edit and diff_keys %}
+        <button type="submit">既存を更新</button>
+        {% endif %}
+      </div>
+    </form>
+    <form method="post" action="/cards/draft/{{ draft['id'] }}/discard">
+      <button type="submit" class="secondary">破棄</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
